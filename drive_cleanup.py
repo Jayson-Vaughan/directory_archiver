@@ -5,8 +5,8 @@ import os
 import shutil
 
 SECONDS = 267 * 24 * 60 * 60  # time since specified date in seconds (632)
-src = 'C:/Users/jvaug/Desktop/cleanup_test'
-dst = 'C:/Users/jvaug/Desktop/cleanup_test/Archive'
+src = 'C:root'
+dst = 'C:root/dst'
 
 
 now = time.time()
@@ -27,6 +27,7 @@ for root, dirs, files in os.walk(dst):  # walk directory to identify all files/f
         if last_mod_time(file_path) > before:  # if file was modified since specified date
             os.unlink(file_path)  # remove from archive folder
 
+            
 for root, dirs, files in os.walk(dst):
     for folders in dirs:
         try:
@@ -36,6 +37,7 @@ for root, dirs, files in os.walk(dst):
         except OSError:
             continue
 
+            
 for root, directories, files in os.walk(src, topdown=True):
     # excludes any directories from exclusion set
     directories[:] = [d for d in directories if d not in exclude]
