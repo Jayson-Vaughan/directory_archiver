@@ -1,33 +1,40 @@
-# Program to traverse directories and archive files not modified since a specified date
+''' Program to traverse directories and archive files not
+    modified since a specified date'''
+
 
 import time
 import os
 import shutil
 
-SECONDS = 267 * 24 * 60 * 60  # time since specified date in seconds (632)
-src = 'C:root'
-dst = 'C:root/dst'
+
+SECONDS = 272 * 24 * 60 * 60  # time since specified date in seconds (1002)
+archive = 'Pre-2018 Archive'
+src = 'C:/Users/jvaug/Desktop/cleanup_test'
+dst = os.path.join(src, archive)
 
 
 now = time.time()
 before = now - SECONDS
 
 
-def last_mod_time(fname):  # function to find the last modified date of files
+# function to find the last modified date of files
+def last_mod_time(fname):
     return os.path.getmtime(fname)
 
 
 shutil.copytree(src, dst)  # copies directory to archive folder
-exclude = set(['Archive'])  # can set exclusions for os.walk()
+exclude = set([archive])  # can set exclusions for os.walk()
 
 
-for root, dirs, files in os.walk(dst):  # walk directory to identify all files/folders
+# removes files not to be archived from archive folder
+for root, dirs, files in os.walk(dst):
     for fname in files:
         file_path = os.path.join(root, fname)
-        if last_mod_time(file_path) > before:  # if file was modified since specified date
-            os.unlink(file_path)  # remove from archive folder
+        if last_mod_time(file_path) > before:
+            os.unlink(file_path)
 
-            
+
+# removes empty folders from the archive folder
 for root, dirs, files in os.walk(dst):
     for folders in dirs:
         try:
@@ -37,23 +44,24 @@ for root, dirs, files in os.walk(dst):
         except OSError:
             continue
 
-            
-for root, directories, files in os.walk(src, topdown=True):
-    # excludes any directories from exclusion set
-    directories[:] = [d for d in directories if d not in exclude]
+
+# removes archived files from directory
+for root, dirs, files in os.walk(src, topdown=True):
+    dirs[:] = [d for d in dirs if d not in exclude]  # os.walk() exceptions
     for fname in files:
         file_path = os.path.join(root, fname)
-        if last_mod_time(file_path) < before:  # if file not modified since specified date
+        if last_mod_time(file_path) < before:
             print('File archived from directory: ' + file_path)
-            os.unlink(file_path)  # removes archived file from directory
+            os.unlink(file_path)
 
 
-for root, directories, files in os.walk(src):
-    directories[:] = [d for d in directories if d not in exclude]
-    for dirs in directories:
+# deletes now empty folders in the directory
+for root, dirs, files in os.walk(src, topdown=True):
+    dirs[:] = [d for d in dirs if d not in exclude]
+    for folders in dirs:
         try:
-            dir_path = os.path.join(root, dirs)
-            print('Empty Folder Deleted from directory: ' + dir_path)
-            os.rmdir(dir_path)  # deletes now empty folders in directory
+            dir_path = os.path.join(root, folders)
+            print('Empty folder deleted from directory: ' + dir_path)
+            os.rmdir(dir_path)
         except OSError:
-            continue  # continues if it finds a folder that is not empty
+            continue
