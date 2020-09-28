@@ -8,8 +8,8 @@ import shutil
 
 
 SECONDS = 272 * 24 * 60 * 60  # time since specified date in seconds (1002)
-archive = 'Pre-2018 Archive'
-src = 'C:/Users/jvaug/Desktop/cleanup_test'
+archive = 'Pre-2020 Archive'
+src = 'root directory'
 dst = os.path.join(src, archive)
 
 
