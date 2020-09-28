@@ -8,8 +8,8 @@ import shutil
 
 
 SECONDS = 272 * 24 * 60 * 60  # time since specified date in seconds (1002)
-archive = 'Pre-2020 Archive'
-src = 'root'
+archive = 'Pre-2018 Archive'
+src = 'C:/Users/jvaug/Desktop/cleanup_test'
 dst = os.path.join(src, archive)
 
 
@@ -39,9 +39,10 @@ for root, dirs, files in os.walk(dst):
     for folders in dirs:
         try:
             folder_path = os.path.join(root, folders)
-            print('Empty folder deleted from archive: ' + folder_path)
             os.rmdir(folder_path)
-        except OSError:
+            print('Empty folder deleted from archive: ' + folder_path)
+        except OSError as e:
+            print('EXCEPTION: ', str(e))
             continue
 
 
@@ -51,17 +52,17 @@ for root, dirs, files in os.walk(src, topdown=True):
     for fname in files:
         file_path = os.path.join(root, fname)
         if last_mod_time(file_path) < before:
-            print('File archived from directory: ' + file_path)
             os.unlink(file_path)
+            print('File archived from directory: ' + file_path)
 
 
 # deletes now empty folders in the directory
-for root, dirs, files in os.walk(src, topdown=True):
+for root, dirs, files in os.walk(src, topdown=False):
     dirs[:] = [d for d in dirs if d not in exclude]
     for folders in dirs:
         try:
             dir_path = os.path.join(root, folders)
-            print('Empty folder deleted from directory: ' + dir_path)
             os.rmdir(dir_path)
-        except OSError:
-            continue
+            print('Empty folder deleted from directory: ' + dir_path)
+        except OSError as e:
+            print("EXCEPTION: ", str(e))
